@@ -9,7 +9,7 @@ class Article(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
     category = models.ForeignKey('Category', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Категория',
                                  related_name='articles')
-    
+
 
     def __str__(self):
         return self.title
