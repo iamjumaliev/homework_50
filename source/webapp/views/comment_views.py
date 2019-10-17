@@ -1,74 +1,81 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from webapp.forms import CommentForm
-from webapp.models import Comment
-from django.views import View
-from django.views.generic import TemplateView
-from .base_views import ListView
-class CommentIndexView(ListView):
-    template_name = 'comment/index_coment.html'
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.views.generic import CreateView, ListView, \
+    UpdateView, DeleteView
+
+from webapp.forms import CommentForm, ArticleCommentForm
+from webapp.models import Comment, Article
+
+
+class CommentListView(ListView):
+    template_name = 'comment/list.html'
     model = Comment
-    context_key = 'comments'
-
-class CommentView(TemplateView):
-    template_name = 'comment/comment.html'
-
-    def get_context_data(self, **kwargs):
-        pk = kwargs.get('pk')
-        context = super().get_context_data(**kwargs)
-        context['comment'] = get_object_or_404(Comment, pk=pk)
-        return context
+    context_object_name = 'comments'
+    ordering = ['-created_at']
+    paginate_by = 10
+    paginate_orphans = 3
 
 
+class CommentForArticleCreateView(CreateView):
+    model = Comment
+    template_name = 'comment/create.html'
+    form_class = ArticleCommentForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.article = self.get_article()
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.article.comments.create(**form.cleaned_data)
+        return redirect('article_view', pk=self.article.pk)
+
+    def get_article(self):
+        article_pk = self.kwargs.get('pk')
+        return get_object_or_404(Article, pk=article_pk)
 
 
-class CommentUpdateView(View):
+class CommentCreateView(CreateView):
+    model = Comment
+    template_name = 'comment/create.html'
+    form_class = CommentForm
+
+    # def get_form(self, form_class=None):
+    #     form = super().get_form(form_class)
+    #     form.fields['article'].queryset = Article.objects.filter(status=STATUS_ACTIVE)
+    #     return form
+
+    def get_success_url(self):
+        return reverse('article_view', kwargs={'pk': self.object.article.pk})
+
+
+class CommentUpdateView(UpdateView):
+    model = Comment
+    template_name = 'comment/update.html'
+    form_class = ArticleCommentForm
+    context_object_name = 'comment'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.article.is_archived:
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('article_view', kwargs={'pk': self.object.article.pk})
+
+
+class CommentDeleteView(DeleteView):
+    model = Comment
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.article.is_archived:
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request, *args, **kwargs):
-        comment = get_object_or_404(Comment, pk=kwargs.get('pk'))
-        form = CommentForm(data={
-            'article': comment.article,
-            'author': comment.author,
-            'text': comment.text
-        })
-        return render(request, 'comment/update.html', context={'form': form, 'comment': comment})
+        return self.delete(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        comment = get_object_or_404(Comment, pk=kwargs.get('pk'))
-        form = CommentForm(data=request.POST)
-        if form.is_valid():
-            comment.article = form.cleaned_data['article']
-            comment.author = form.cleaned_data['author']
-            comment.text = form.cleaned_data['text']
-            comment.save()
-            return redirect('comment_view', pk=comment.pk)
-        else:
-            return render(request, 'comment/update.html', context={'form': form, 'comment': comment})
-
-
-class CommentDeleteView(View):
-    def get(self, request, *args, **kwargs):
-        comment = get_object_or_404(Comment, pk=kwargs.get('pk'))
-        return render(request, 'comment/delete.html', context={'comment': comment})
-
-    def post(self, request, *args, **kwargs):
-        comment = get_object_or_404(Comment, pk=kwargs.get('pk'))
-        comment.delete()
-        return redirect('comment_index')
-
-
-class CommentCreateView(View):
-    def get(self, request, *args, **kwargs):
-        form = CommentForm()
-        return render(request, 'comment/create.html', context={'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = CommentForm(data=request.POST)
-        if form.is_valid():
-            comment = Comment.objects.create(
-                author=form.cleaned_data['author'],
-                text=form.cleaned_data['text'],
-                article=form.cleaned_data['article']
-            )
-            # это нужно исправить на ваш url.
-            return redirect('comment_view', pk=comment.pk)
-        else:
-            return render(request, 'comment/create.html', context={'form': form})
+    def get_success_url(self):
+        return reverse('article_view', kwargs={'pk': self.object.article.pk})
