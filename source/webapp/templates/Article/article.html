@@ -13,7 +13,7 @@
 {% block content %}
     <h1>{{ article.title }}</h1>
     {% for tag in article.tags.all %}
-        <h2>{{ tag.name }}</h2>
+        <a href="/?tags="><h2>{{ tag.name }}</h2></a>
     {% endfor %}
     <p>Created by {{ article.author }} ({{ article.category|default_if_none:'Без категории' }})
         at {{ article.created_at|date:'d.m.Y H:i:s' }}</p>
