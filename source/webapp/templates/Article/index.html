@@ -19,6 +19,9 @@
             <a href="{% url 'article_update' article.pk %}"  class="nav-link">Edit</a>
             <a href="{% url "article_delete" article.pk %}"  class="nav-link">Delete</a>
         </p>
+        {% for tag in article.tags.all %}
+        <h2>{{ tag.name }}</h2>
+    {% endfor %}
         <hr/>
     {% endfor %}
 {% endblock %}

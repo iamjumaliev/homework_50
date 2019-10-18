@@ -29,6 +29,7 @@ class IndexView(ListView):
             queryset = queryset.filter(
                 Q(title__icontains=self.search_value)
                 | Q(author__icontains=self.search_value)
+                | Q(tags__name__iexact=self.search_value)
             )
         return queryset
 
@@ -108,6 +109,15 @@ class ArticleUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('article_view', kwargs={'pk': self.object.pk})
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=None)
+        tag_list = ''
+        tags = list(self.object.tags.all())
+        for tag in tags:
+                tag_list += tag.name + ','
+        form.fields['tags'].initial = tag_list.strip(',')
+        return form
 
 
     def form_valid(self, form):
