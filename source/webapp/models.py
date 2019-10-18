@@ -9,6 +9,7 @@ class Article(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
     category = models.ForeignKey('Category', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Категория',
                                  related_name='articles')
+    tags = models.ManyToManyField('webapp.Tag', related_name='articles', blank=True, verbose_name='Теги')
 
 
     def __str__(self):

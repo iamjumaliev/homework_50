@@ -8,7 +8,8 @@
     "author": "Me",
     "created_at": "2019-09-03T14:17:12.139Z",
     "updated_at": "2019-10-01T12:18:07.890Z",
-    "category": 2
+    "category": 2,
+    "tags": []
   }
 },
 {
@@ -20,7 +21,8 @@
     "author": "Me",
     "created_at": "2019-09-03T14:06:09.002Z",
     "updated_at": "2019-09-03T14:06:09.002Z",
-    "category": null
+    "category": null,
+    "tags": []
   }
 },
 {
@@ -32,7 +34,8 @@
     "author": "He",
     "created_at": "2019-09-03T14:09:48.915Z",
     "updated_at": "2019-09-03T14:09:48.915Z",
-    "category": null
+    "category": null,
+    "tags": []
   }
 },
 {
@@ -44,7 +47,8 @@
     "author": "Author",
     "created_at": "2019-09-03T14:44:14.453Z",
     "updated_at": "2019-09-03T14:44:14.453Z",
-    "category": null
+    "category": null,
+    "tags": []
   }
 },
 {
@@ -55,8 +59,12 @@
     "text": "Test",
     "author": "Test",
     "created_at": "2019-09-24T05:29:56.892Z",
-    "updated_at": "2019-09-24T05:29:56.892Z",
-    "category": null
+    "updated_at": "2019-10-18T09:59:28.088Z",
+    "category": null,
+    "tags": [
+      4,
+      5
+    ]
   }
 },
 {
@@ -67,8 +75,14 @@
     "text": "Test 2",
     "author": "Test 2",
     "created_at": "2019-09-24T05:31:09.395Z",
-    "updated_at": "2019-09-24T05:31:09.395Z",
-    "category": null
+    "updated_at": "2019-10-18T10:04:40.226Z",
+    "category": null,
+    "tags": [
+      2,
+      4,
+      5,
+      6
+    ]
   }
 },
 {
@@ -108,11 +122,11 @@
   "model": "webapp.comment",
   "pk": 4,
   "fields": {
-    "article": 2,
+    "article": 5,
     "text": "hgjhg",
-    "author": "\u0410\u043d\u043e\u043d\u0438\u043c",
+    "author": "\u0410\u043d\u043e\u043d\u0438\u043cecec\u0449\u0449\u0437",
     "created_at": "2019-10-01T11:42:30.345Z",
-    "updated_at": "2019-10-01T11:42:30.345Z"
+    "updated_at": "2019-10-01T13:35:03.643Z"
   }
 },
 {
@@ -137,11 +151,59 @@
   }
 },
 {
+  "model": "webapp.tag",
+  "pk": 1,
+  "fields": {
+    "name": "tag1",
+    "created_at": "2019-10-18T09:57:50.592Z"
+  }
+},
+{
+  "model": "webapp.tag",
+  "pk": 2,
+  "fields": {
+    "name": "tag2",
+    "created_at": "2019-10-18T09:57:56.535Z"
+  }
+},
+{
+  "model": "webapp.tag",
+  "pk": 3,
+  "fields": {
+    "name": "tag3",
+    "created_at": "2019-10-18T09:58:03.008Z"
+  }
+},
+{
+  "model": "webapp.tag",
+  "pk": 4,
+  "fields": {
+    "name": "tag2",
+    "created_at": "2019-10-18T09:58:39.840Z"
+  }
+},
+{
+  "model": "webapp.tag",
+  "pk": 5,
+  "fields": {
+    "name": "lolololo",
+    "created_at": "2019-10-18T09:59:23.978Z"
+  }
+},
+{
+  "model": "webapp.tag",
+  "pk": 6,
+  "fields": {
+    "name": "tag2",
+    "created_at": "2019-10-18T10:04:37.957Z"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$150000$rETxGUggP9m6$1+XpTSlJd0TUOGy4a5vygINOKbNt4VBXluA1qSdpgYY=",
-    "last_login": "2019-09-24T13:55:07.905Z",
+    "last_login": "2019-10-18T09:56:26.881Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "",

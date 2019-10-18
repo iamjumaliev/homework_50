@@ -6,12 +6,12 @@ from django.views.generic import ListView, DetailView, CreateView,\
     UpdateView, DeleteView
 
 from webapp.forms import ArticleForm, ArticleCommentForm, SimpleSearchForm
-from webapp.models import Article
+from webapp.models import Article, Tag
 from django.core.paginator import Paginator
 
 
 class IndexView(ListView):
-    template_name = 'article/index.html'
+    template_name = 'Article/index.html'
     context_object_name = 'articles'
     model = Article
     ordering = ['-created_at']
@@ -54,13 +54,14 @@ class IndexView(ListView):
 
 
 class ArticleView(DetailView):
-    template_name = 'article/article.html'
+    template_name = 'Article/article.html'
     model = Article
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         article = self.object
         context['form'] = ArticleCommentForm()
+        print(article.tags.all())
         comments = article.comments.order_by('-created_at')
         self.paginate_comments_to_context(comments, context)
         return context
@@ -75,18 +76,33 @@ class ArticleView(DetailView):
         context['is_paginated'] = page.has_other_pages()
 
 
+
 class ArticleCreateView(CreateView):
     form_class = ArticleForm
     model = Article
-    template_name = 'article/create.html'
+    template_name = 'Article/create.html'
 
     def get_success_url(self):
         return reverse('article_view', kwargs={'pk': self.object.pk})
 
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.tag_parser()
+        return redirect(self.get_success_url())
+
+    def tag_parser(self):
+        tags = self.request.POST.get('tags')
+        tag_list = tags.split(',')
+        for tag in tag_list:
+            given_tag, created =Tag.objects.get_or_create(name=tag)
+            self.object.tags.add(given_tag)
+
+
+
 class ArticleUpdateView(UpdateView):
     model = Article
-    template_name = 'article/update.html'
+    template_name = 'Article/update.html'
     form_class = ArticleForm
     context_object_name = 'article'
 
@@ -94,9 +110,29 @@ class ArticleUpdateView(UpdateView):
         return reverse('article_view', kwargs={'pk': self.object.pk})
 
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.tag_parser()
+        return redirect(self.get_success_url())
+
+    def tag_parser(self):
+        tags = self.request.POST.get('tags')
+        tag_list = tags.split(',')
+        self.object.tags.clear()
+        for tag in tag_list:
+            given_tag, created =Tag.objects.get_or_create(name=tag)
+            self.object.tags.add(given_tag)
+
+
+
+
+
+
+
+
 class ArticleDeleteView(DeleteView):
     model = Article
-    template_name = 'article/delete.html'
+    template_name = 'Article/delete.html'
     context_object_name = 'article'
     success_url = reverse_lazy('index')
 

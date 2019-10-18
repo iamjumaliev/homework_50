@@ -9,7 +9,7 @@ from webapp.models import Comment, Article
 
 
 class CommentListView(ListView):
-    template_name = 'comment/list.html'
+    template_name = 'comment/comment.html'
     model = Comment
     context_object_name = 'comments'
     ordering = ['-created_at']
@@ -55,11 +55,6 @@ class CommentUpdateView(UpdateView):
     form_class = ArticleCommentForm
     context_object_name = 'comment'
 
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.object.article.is_archived:
-            raise Http404
-        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('article_view', kwargs={'pk': self.object.article.pk})

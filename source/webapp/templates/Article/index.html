@@ -2,6 +2,9 @@
 
 {% block menu %}
     <li><a href="{% url 'article_add' %}"  class="nav-link">Add Article</a></li>
+    <div class="search">
+        {% include 'partial/simple_search.html' %}
+    </div>
 {% endblock %}
 
 {% block content %}

@@ -1,5 +1,5 @@
 from .article_views import IndexView, ArticleView, ArticleCreateView, \
     ArticleUpdateView,ArticleDeleteView
 
-from .comment_views import CommentIndexView,CommentView,CommentCreateView,\
+from .comment_views import CommentListView,CommentCreateView,\
     CommentDeleteView,CommentUpdateView
