@@ -11,10 +11,13 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ article.title }}</h1>
+    <h1> Статья: {{ article.title }}</h1>
+    <hr>
+    <h2>Тэги</h2>
     {% for tag in article.tags.all %}
-        <a href="/?tags="><h2>{{ tag.name }}</h2></a>
+        <a href="/?tag={{ tag.name }}"><p>{{ tag.name }}</p></a>
     {% endfor %}
+    <hr>
     <p>Created by {{ article.author }} ({{ article.category|default_if_none:'Без категории' }})
         at {{ article.created_at|date:'d.m.Y H:i:s' }}</p>
     <div class="pre">{{ article.text }}</div>
@@ -36,8 +39,6 @@
         {% empty %}
             <p>No comments yet.</p>
         {% endfor %}
-
-
     </div>
     {% if is_paginated %}
         {% include 'partial/pagination.html' %}

@@ -26,18 +26,20 @@ class IndexView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         if self.search_value:
+            print(self.search_value)
+            print(queryset.filter(tags__name__icontains=self.search_value).values('tags__name'))
             queryset = queryset.filter(
                 Q(title__icontains=self.search_value)
                 | Q(author__icontains=self.search_value)
                 | Q(tags__name__iexact=self.search_value)
-            )
+            ).distinct()
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['form'] = self.form
         if self.search_value:
-            context['query'] = urlencode({'search': self.search_value})
+            context['query'] = urlencode({'tag': self.search_value})
         context['archived_articles'] = self.get_archived_articles()
         return context
 
@@ -50,7 +52,7 @@ class IndexView(ListView):
 
     def get_search_value(self):
         if self.form.is_valid():
-            return self.form.cleaned_data['search']
+            return self.form.cleaned_data['tag']
         return None
 
 
@@ -116,8 +118,9 @@ class ArticleUpdateView(UpdateView):
         tags = list(self.object.tags.all())
         for tag in tags:
                 tag_list += tag.name + ','
-        form.fields['tags'].initial = tag_list.strip(',')
+        form.fields['tags'].initial = tag_list.strip()
         return form
+
 
 
     def form_valid(self, form):
@@ -132,12 +135,6 @@ class ArticleUpdateView(UpdateView):
         for tag in tag_list:
             given_tag, created =Tag.objects.get_or_create(name=tag)
             self.object.tags.add(given_tag)
-
-
-
-
-
-
 
 
 class ArticleDeleteView(DeleteView):
