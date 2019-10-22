@@ -89,5 +89,4 @@ class FullSearchForm(forms.Form):
                     'One of the checkboxes: In articles, In comments should be checked.',
                     code='no_text_search_destination'
                 )
-
         return self.cleaned_data
